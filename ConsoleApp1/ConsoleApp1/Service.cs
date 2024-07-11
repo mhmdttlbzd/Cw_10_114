@@ -45,15 +45,34 @@ namespace ConsoleApp1
             if (user != null) {
                 var product = Store.Products.FirstOrDefault(x => x.Id == productId);
                 if (product != null) {
-                    if (user.Money >= product.Price)
+                    long price = product.Price;
+                    if (product is PC)
+                    {
+                       var pc = product as PC;
+                        
+                        foreach (var item in pc.InnerProducts)
+                        {
+                            price += item.Price;
+                        }
+                    }
+
+                    if (user.Money >= price)
                     {
                         user.Products.Add(product);
-                        user.Money -= product.Price;
+                        user.Money -= price;
                         return true;
                     }
                 }
             }
             return false;
         }
+
+        public List<Product> GetAllListProduct(string name)
+        {
+            var user = UsersList.GetByName(name);
+            return user.Products;
+           
+        }
+
     }
 }
